@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dar Sprite Editor</title>
+
+    <script lang="javascript" type="module">
+        import { Canvas } from "/canvas.js";
+
+        const canvas = Canvas("canvas", {
+          width: 128,
+          height: 64,
+          size: 10
+        });
+
+        const container = document.getElementById("container");
+        container.appendChild(canvas);
+    </script>
+
+    <style>
+      :root {
+        --pixel-size: 10px;
+      }
+
+      .canvas-pixel {
+        width: var(--pixel-size);
+        height: var(--pixel-size);
+        border: solid 1px #abbacd;
+        display: inline-block;
+      }
+
+      .sprite-container {
+        line-height: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="section" id="container">
+    </section>
+
+    <template id="canvas">
+      <h1 class="title is-1">Sprite</h1>
+      <div data-teba-id="container" class="sprite-container">
+
+      </div>
+    </template>
+
+    <template id="canvas-pixel">
+      <div class="canvas-pixel"></div>
+    </template>
+
+  </body>
+</html>
