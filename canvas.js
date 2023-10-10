@@ -1,8 +1,9 @@
 // @ts-check
 
+import { wrapForTeba } from "./teba.js";
+
 /**
- * 
- * @param {string} templateId 
+ * @param {HTMLElement} cloned
  * @param {Object} params - Params for Canvas
  * @param {number} [params.width=128] - The width of the Canvas
  * @param {number} [params.height=64] - The height of the Canvas
@@ -10,15 +11,7 @@
  * 
  * @returns {HTMLElement}
  */
-export function Canvas(templateId, params = {}) {
-    /** @type {HTMLTemplateElement} */
-    // @ts-ignore
-    const template = document.getElementById(templateId);
-
-    if (!template) {
-        throw new Error(`Template with id: ${templateId} not found`)
-    }
-
+function _Canvas(cloned, params = {}) {
     if (!params.height) {
         params.height = 64
     }
@@ -31,9 +24,6 @@ export function Canvas(templateId, params = {}) {
         params.size = 10
     }
 
-    /** @type {HTMLElement} */
-    //  @ts-ignore 
-    const cloned = template.content.cloneNode(true)
     const containerId = 'container'
     const container = cloned.querySelectorAll(`[data-teba-id='${containerId}']`)[0]
 
@@ -44,35 +34,33 @@ export function Canvas(templateId, params = {}) {
     document.documentElement.style.setProperty("--pixel-size", `${params.size}px`)
 
     for(let y = 0; y < params.height; y++) {
+        container.appendChild(document.createElement("br"))
+
         for (let x = 0; x < params.width; x++) {
-            const pixel = CanvasPixel('canvas-pixel', {
+            const pixel = CanvasPixel({
                 x,
                 y
             });
 
-            container.appendChild(pixel);
+            container.appendChild(pixel.element);
         }
     }
 
     return cloned
 }
 
+export const Canvas = wrapForTeba(_Canvas, "canvas")
+
 /**
  * 
- * @param {string} templateId 
+ * @param {HTMLElement} cloned 
  * @param {Object} params - Params for CanvasPixel
  * @param {number} [params.x = 0] - Position on the x axis
  * @param {number} [params.y = 0] - Position on the y axis
  * 
  * @returns {HTMLElement}
  */
-export function CanvasPixel (templateId, params = {}) {
-    const template = document.getElementById(templateId);
-
-    if (!template) {
-        throw new Error(`Template with id: ${templateId} not found`)
-    }
-
+export function _CanvasPixel (cloned, params = {}) {
     if (!params.x) {
         params.x = 0
     }
@@ -80,10 +68,8 @@ export function CanvasPixel (templateId, params = {}) {
     if (!params.y) {
         params.y = 0
     }
-
-    /** @type {HTMLElement} */
-    //  @ts-ignore 
-    const cloned = template.content.cloneNode(true)
     
     return cloned
 }
+
+export const CanvasPixel = wrapForTeba(_CanvasPixel, "canvas-pixel")

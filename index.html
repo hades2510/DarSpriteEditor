@@ -7,14 +7,14 @@
     <script lang="javascript" type="module">
         import { Canvas } from "/canvas.js";
 
-        const canvas = Canvas("canvas", {
-          width: 128,
-          height: 64,
+        const canvas = Canvas({
+          width: 8,
+          height: 16,
           size: 10
         });
 
         const container = document.getElementById("container");
-        container.appendChild(canvas);
+        container.appendChild(canvas.element);
     </script>
 
     <style>
@@ -26,7 +26,7 @@
         width: var(--pixel-size);
         height: var(--pixel-size);
         border: solid 1px #abbacd;
-        display: inline-block;
+        display: table-cell;
       }
 
       .sprite-container {
