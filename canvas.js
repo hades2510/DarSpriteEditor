@@ -9,9 +9,11 @@ import { wrapForTeba } from "./teba.js";
  * @param {number} [params.height=64] - The height of the Canvas
  * @param {number} [params.size=10] - The size of a pixel
  * 
+ * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
+ *
  * @returns {HTMLElement}
  */
-function _Canvas(cloned, params = {}) {
+function _Canvas(cloned, params = {}, domElements) {
     if (!params.height) {
         params.height = 64
     }
@@ -24,19 +26,28 @@ function _Canvas(cloned, params = {}) {
         params.size = 10
     }
 
-    const containerId = 'container'
-    const container = cloned.querySelectorAll(`[data-teba-id='${containerId}']`)[0]
+    const container = domElements.get("container")
 
-    if (!container) {
-        throw new Error(`Template missing slot ${containerId}`)
+    const render = () => {
+        container.innerHTML = "";
+
+        for(let y = 0; y < params.height; y++) {
+            container.appendChild(document.createElement("br"))
+
+            for (let x = 0; x < params.width; x++) {
+                const pixel = CanvasPixel({
+                    x,
+                    y
+                });
+
+                container.appendChild(pixel.element);
+            }
+        }
     }
 
     /** @type {HTMLInputElement} */
     // @ts-ignore
-    const pixelSize = cloned.querySelectorAll(`[data-teba-id='pixel-size']`)[0]
-    if (!pixelSize) {
-        throw new Error(`Missing `)
-    }
+    const pixelSize = domElements.get("pixel-size")
     pixelSize.value = params.size.toString()
     pixelSize.addEventListener("input", (event) => {
         document.documentElement.style.setProperty("--pixel-size", `${event.target.value}px`)    
@@ -44,18 +55,25 @@ function _Canvas(cloned, params = {}) {
 
     document.documentElement.style.setProperty("--pixel-size", `${params.size}px`)
 
-    for(let y = 0; y < params.height; y++) {
-        container.appendChild(document.createElement("br"))
+    /** @type {HTMLInputElement} */
+    // @ts-ignore
+    const canvasWidth = domElements.get("width")
+    canvasWidth.value = params.width.toString()
+    canvasWidth.addEventListener("input", (event) => {
+        params.width = event.target.value
+        render()
+    });
 
-        for (let x = 0; x < params.width; x++) {
-            const pixel = CanvasPixel({
-                x,
-                y
-            });
+    /** @type {HTMLInputElement} */
+    // @ts-ignore
+    const canvasHeight = domElements.get("height")
+    canvasHeight.value = params.height.toString()
+    canvasHeight.addEventListener("input", (event) => {
+        params.height = event.target.value
+        render()
+    });
 
-            container.appendChild(pixel.element);
-        }
-    }
+    render();
 
     return cloned
 }
