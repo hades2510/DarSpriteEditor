@@ -5,7 +5,7 @@ const registry = new Map();
 /**
  * 
  * @param {Function} f 
- * @param {string} defaultTemplateId 
+ * @param {string} defaultTemplateId
  * @returns 
  */
 export function wrapForTeba(f, defaultTemplateId) {
@@ -28,8 +28,16 @@ export function wrapForTeba(f, defaultTemplateId) {
         /** @type {HTMLElement} */
         //  @ts-ignore 
         const cloned = template.content.cloneNode(true)
+        const slots = new Map()
 
-        const elem = f(cloned, params)
+        //  get slots and pass them to function
+        const tebaSlots = cloned.querySelectorAll('[data-teba-id]')
+
+        for(let slot of tebaSlots) {
+            slots.set(slot.getAttribute('data-teba-id'), slot)
+        }
+
+        const elem = f(cloned, params, slots)
 
         return {
             element: elem
