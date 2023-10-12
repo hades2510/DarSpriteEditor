@@ -26,7 +26,6 @@
       }
 
       .canvas-container {
-        max-width: 500px;
       }
 
       .canvas-pixel {
@@ -59,15 +58,37 @@
       <div class="canvas-container">
         <h1 class="title is-1">Sprite</h1>
 
-        <span class="icon-text">
+        <div class="icon-text">
           <span class="icon">
             <span class="mdi mdi-resize"></span>
           </span>
           <span>Pixel size</span>
-        </span>
 
-        <div class="control">
-          <input class="input is-small" type="text" placeholder="" data-teba-id="pixel-size">
+          <div class="control">
+            <input class="input is-small" type="text" placeholder="" data-teba-id="pixel-size">
+          </div>
+        </div>
+
+        <div class="icon-text">
+          <span class="icon">
+            <span class="mdi mdi-table-column-width"></span>
+          </span>
+          <span>Width</span>
+
+          <div class="control">
+            <input class="input is-small" type="text" placeholder="" data-teba-id="width">
+          </div>
+        </div>
+
+        <div class="icon-text">
+          <span class="icon">
+            <span class="mdi mdi-table-row-height"></span>
+          </span>
+          <span>Height</span>
+
+          <div class="control">
+            <input class="input is-small" type="text" placeholder="" data-teba-id="height">
+          </div>
         </div>
 
         <div data-teba-id="container" class="sprite-container">
