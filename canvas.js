@@ -8,6 +8,7 @@ import { wrapForTeba } from "./teba.js";
  * @param {number} [params.width=128] - The width of the Canvas
  * @param {number} [params.height=64] - The height of the Canvas
  * @param {number} [params.size=10] - The size of a pixel
+ * @param {boolean} [params.grid=true] - If grid should be showned
  * 
  * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
  *
@@ -24,6 +25,10 @@ function _Canvas(cloned, params = {}, domElements) {
 
     if (!params.size) {
         params.size = 10
+    }
+
+    if (params.grid === undefined) {
+        params.grid = true
     }
 
     const container = domElements.get("container")
@@ -50,7 +55,7 @@ function _Canvas(cloned, params = {}, domElements) {
     const pixelSize = domElements.get("pixel-size")
     pixelSize.value = params.size.toString()
     pixelSize.addEventListener("input", (event) => {
-        document.documentElement.style.setProperty("--pixel-size", `${event.target.value}px`)    
+        document.documentElement.style.setProperty("--pixel-size", `${event.target.value}px`)
     });
 
     document.documentElement.style.setProperty("--pixel-size", `${params.size}px`)
@@ -72,6 +77,23 @@ function _Canvas(cloned, params = {}, domElements) {
         params.height = event.target.value
         render()
     });
+
+    /** @type {HTMLInputElement} */
+    // @ts-ignore
+    const grid = domElements.get("grid")
+    grid.checked = params.grid
+    grid.addEventListener("input", (event) => {
+        const gridIcon = domElements.get("grid-icon")
+        if (grid.checked) {
+            document.documentElement.style.setProperty("--pixel-border", "var(--initial-pixelborder)" )
+            gridIcon?.classList.remove("mdi-grid-off")
+            gridIcon?.classList.add("mdi-grid")
+        } else {
+            document.documentElement.style.setProperty("--pixel-border", "none")
+            gridIcon?.classList.add("mdi-grid-off")
+            gridIcon?.classList.remove("mdi-grid")
+        }
+    })
 
     render();
 
@@ -99,9 +121,22 @@ export function _CanvasPixel (cloned, params = {}) {
         params.y = 0
     }
 
-    if (params.state) {
-        cloned.classList.add("pixel-on")
+    const render = () => {
+        const onClass = "pixel-on"
+
+        if (params.state) {
+            cloned.classList.add(onClass)
+        } else {
+            cloned.classList?.remove(onClass)
+        }
     }
+
+    cloned.addEventListener("click", () => {
+        params.state = !params.state
+        render()
+    })
+
+    render()
     
     return cloned
 }

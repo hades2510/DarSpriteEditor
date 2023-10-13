@@ -23,6 +23,8 @@
     <style>
       :root {
         --pixel-size: 10px;
+        --initial-pixelborder: solid 1px #abbacd;
+        --pixel-border: var(--initial-pixelborder);
       }
 
       .canvas-container {
@@ -31,7 +33,7 @@
       .canvas-pixel {
         width: var(--pixel-size);
         height: var(--pixel-size);
-        border: solid 1px #abbacd;
+        border: var(--pixel-border);
         display: table-cell;
         cursor: pointer;
       }
@@ -89,6 +91,16 @@
           <div class="control">
             <input class="input is-small" type="text" placeholder="" data-teba-id="height">
           </div>
+        </div>
+
+        <div class="icon-text">
+          <span class="icon">
+            <span class="mdi mdi-grid" data-teba-id="grid-icon"></span>
+          </span>
+          <label class="checkbox">
+            <input type="checkbox" data-teba-id="grid">
+            Grid
+          </label>
         </div>
 
         <div data-teba-id="container" class="sprite-container">
