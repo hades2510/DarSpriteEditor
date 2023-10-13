@@ -37,7 +37,9 @@ export function wrapForTeba(f, defaultTemplateId) {
             slots.set(slot.getAttribute('data-teba-id'), slot)
         }
 
-        const elem = f(cloned, params, slots)
+        const firstElement = cloned.children[0]
+
+        const elem = f(firstElement, params, slots)
 
         return {
             element: elem
