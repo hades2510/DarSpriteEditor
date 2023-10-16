@@ -14,7 +14,7 @@ export function wrapForTeba(f, defaultTemplateId) {
         registry.set(f, defaultTemplateId)
     }
 
-    return (params) => {
+    return (params = {}) => {
         const templateId = params.templateId || defaultTemplateId;
 
         /** @type {HTMLTemplateElement} */
