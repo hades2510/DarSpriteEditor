@@ -107,7 +107,11 @@ function _Canvas(cloned, params = {}, domElements) {
             title: "Delete sprite",
             content: "Are you sure you want to delete this sprite?",
             confirm: "Delete sprite",
-            cancel: "Cancel"
+            cancel: "Cancel",
+            onConfirm: () => {
+                modal.close()
+                cloned.parentElement?.removeChild(cloned)
+            }
         });
         modal.activate();
 

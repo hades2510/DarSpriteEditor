@@ -6,6 +6,7 @@ import { wrapForTeba } from "./teba.js";
  * @typedef {Object} ModalReturn
  * @property {HTMLElement} element
  * @property {Function} activate
+ * @property {Function} close
  */
 
 /**
@@ -15,6 +16,7 @@ import { wrapForTeba } from "./teba.js";
  * @param {string} [params.content=""] - The content for the modal
  * @param {string} [params.cancel=""] - The cancel button text
  * @param {string} [params.confirm=""] - The confirm button text
+ * @param {Function} [params.onConfirm] - Confirmation callback
  * 
  * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
  *
@@ -22,9 +24,12 @@ import { wrapForTeba } from "./teba.js";
  */
 function _Modal(cloned, params, domElements) {
     const cancel = () => cloned.parentElement?.removeChild(cloned)
+    const confirm = () => params.onConfirm?.()
 
     domElements.get("close-x")?.addEventListener("click", cancel)
     domElements.get("close-button")?.addEventListener("click", cancel)
+
+    domElements.get("confirm")?.addEventListener("click", confirm)
 
     domElements.get("title").textContent = params.title
     domElements.get("content").textContent = params.content
@@ -33,7 +38,8 @@ function _Modal(cloned, params, domElements) {
 
     return {
         element: cloned,
-        activate: () => cloned.classList.add("is-active")
+        activate: () => cloned.classList.add("is-active"),
+        close: cancel
     }
 }
 
