@@ -10,11 +10,11 @@ import { wrapForTeba } from "./teba.js";
 
 /**
  * @param {HTMLElement} cloned
- * @param {Object} params - Params for Canvas
- * @param {number} [params.width=128] - The width of the Canvas
- * @param {number} [params.height=64] - The height of the Canvas
- * @param {number} [params.size=10] - The size of a pixel
- * @param {boolean} [params.grid=true] - If grid should be showned
+ * @param {Object} params - Params for Modal
+ * @param {string} [params.title=""] - The title for the modal
+ * @param {string} [params.content=""] - The content for the modal
+ * @param {string} [params.cancel=""] - The cancel button text
+ * @param {string} [params.confirm=""] - The confirm button text
  * 
  * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
  *
@@ -25,6 +25,11 @@ function _Modal(cloned, params, domElements) {
 
     domElements.get("close-x")?.addEventListener("click", cancel)
     domElements.get("close-button")?.addEventListener("click", cancel)
+
+    domElements.get("title").textContent = params.title
+    domElements.get("content").textContent = params.content
+    domElements.get("confirm").textContent = params.confirm
+    domElements.get("close-button").textContent = params.cancel
 
     return {
         element: cloned,

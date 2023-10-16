@@ -103,7 +103,12 @@ function _Canvas(cloned, params = {}, domElements) {
     // @ts-ignore
     const deleteButton = domElements.get("delete")
     deleteButton.addEventListener("click", (event) => {
-        const modal = Modal();
+        const modal = Modal({
+            title: "Delete sprite",
+            content: "Are you sure you want to delete this sprite?",
+            confirm: "Delete sprite",
+            cancel: "Cancel"
+        });
         modal.activate();
 
         document.body.appendChild(modal.element)
