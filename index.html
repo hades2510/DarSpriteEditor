@@ -105,7 +105,7 @@
             <span>Width</span>
 
             <div class="control">
-              <input class="input is-small" type="text" placeholder="" data-teba-id="width">
+              <input class="is-normal" type="range" min="8" max="64" step="8" list="size-markers" data-teba-id="width">
             </div>
           </div>
 
@@ -116,9 +116,20 @@
             <span>Height</span>
 
             <div class="control">
-              <input class="input is-small" type="text" placeholder="" data-teba-id="height">
+              <input class="is-normal" type="range" min="8" max="64" step="8" list="size-markers" data-teba-id="height">
             </div>
           </div>
+
+          <datalist id="size-markers">
+            <option value="8" label="8"></option>
+            <option value="16" label="16"></option>
+            <option value="24" label="24"></option>
+            <option value="32" label="32"></option>
+            <option value="40" label="40"></option>
+            <option value="48" label="48"></option>
+            <option value="56" label="56"></option>
+            <option value="64" label="64"></option>
+          </datalist>
 
           <div class="icon-text">
             <span class="icon">
