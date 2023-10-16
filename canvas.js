@@ -2,6 +2,8 @@
 
 import { wrapForTeba } from "./teba.js";
 
+import { Modal } from "./modal.js";
+
 /**
  * @param {HTMLElement} cloned
  * @param {Object} params - Params for Canvas
@@ -94,6 +96,18 @@ function _Canvas(cloned, params = {}, domElements) {
             gridIcon?.classList.remove("mdi-grid")
         }
     })
+
+    const deleteModal = domElements.get("delete-modal")
+
+    /** @type {HTMLInputElement} */
+    // @ts-ignore
+    const deleteButton = domElements.get("delete")
+    deleteButton.addEventListener("click", (event) => {
+        const modal = Modal();
+        modal.activate();
+
+        document.body.appendChild(modal.element)
+    });
 
     render();
 
