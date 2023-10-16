@@ -39,10 +39,12 @@ export function wrapForTeba(f, defaultTemplateId) {
 
         const firstElement = cloned.children[0]
 
-        const elem = f(firstElement, params, slots)
+        const ret = f(firstElement, params, slots)
 
-        return {
-            element: elem
+        if (ret.element) {
+            return ret
+        } else return {
+            element: ret
         }
     }
 }
