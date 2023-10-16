@@ -28,6 +28,12 @@
       }
 
       .canvas-container {
+        max-width: 50%;
+      }
+
+      .canvas-title {
+        display: flex;
+        justify-content: space-between;
       }
 
       .canvas-pixel {
@@ -58,7 +64,27 @@
 
     <template id="canvas">
       <nav class="canvas-container panel">
-        <p class="title panel-heading">Sprite</p>
+        <div class="title panel-heading canvas-title">
+          Sprite
+
+          <div class="field has-addons">
+            <p class="control">
+              <button class="button is-small" data-teba-id="duplicate">
+                <span class="icon">
+                  <i class="mdi mdi-content-duplicate"></i>
+                </span>
+              </button>
+            </p>
+
+            <p class="control">
+              <button class="button is-small is-danger" data-teba-id="delete">
+                <span class="icon">
+                  <i class="mdi mdi-delete"></i>
+                </span>
+              </button>
+            </p>
+          </div>
+        </div>
 
         <div class="panel-block">
           <div class="icon-text">
@@ -108,11 +134,33 @@
         <div data-teba-id="container" class="sprite-container">
 
         </div>
+
+        <div data-teba-id="modal-container"></div>
       </nav>
     </template>
 
     <template id="canvas-pixel">
       <div class="canvas-pixel"></div>
+    </template>
+
+    <template id="modal">
+      <div class="modal" data-teba-id="modal">
+        <div class="modal-background"></div>
+
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Delete confirmation</p>
+            <button class="delete" aria-label="close" data-teba-id="close-x"></button>
+          </header>
+          <section class="modal-card-body">
+            Are you sure you want to delete this sprite?
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-danger" data-teba-id="confirm">Delete sprite</button>
+            <button class="button" data-teba-id="close-button">Cancel</button>
+          </footer>
+        </div>
+      </div>
     </template>
 
   </body>
