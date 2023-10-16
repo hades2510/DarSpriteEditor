@@ -35,11 +35,15 @@ function _Canvas(cloned, params = {}, domElements) {
 
     const container = domElements.get("container")
 
-    const render = () => {
-        container.innerHTML = "";
+    /** @type Array<Array<any>> */
+    let pixels = []
+
+    const genPixels = () => {
+        pixels = []
 
         for(let y = 0; y < params.height; y++) {
-            container.appendChild(document.createElement("br"))
+            const row = []
+            pixels.push(row)
 
             for (let x = 0; x < params.width; x++) {
                 const pixel = CanvasPixel({
@@ -47,7 +51,19 @@ function _Canvas(cloned, params = {}, domElements) {
                     y
                 });
 
-                container.appendChild(pixel.element);
+                row.push(pixel)
+            }
+        }
+    }
+
+    const render = () => {
+        container.innerHTML = "";
+
+        for(let y = 0; y < params.height; y++) {
+            container.appendChild(document.createElement("br"))
+
+            for (let x = 0; x < params.width; x++) {
+                container.appendChild(pixels[y][x].element);
             }
         }
     }
@@ -68,6 +84,7 @@ function _Canvas(cloned, params = {}, domElements) {
     canvasWidth.value = params.width.toString()
     canvasWidth.addEventListener("input", (event) => {
         params.width = event.target.value
+        genPixels()
         render()
     });
 
@@ -77,6 +94,7 @@ function _Canvas(cloned, params = {}, domElements) {
     canvasHeight.value = params.height.toString()
     canvasHeight.addEventListener("input", (event) => {
         params.height = event.target.value
+        genPixels()
         render()
     });
 
@@ -97,8 +115,6 @@ function _Canvas(cloned, params = {}, domElements) {
         }
     })
 
-    const deleteModal = domElements.get("delete-modal")
-
     /** @type {HTMLInputElement} */
     // @ts-ignore
     const deleteButton = domElements.get("delete")
@@ -118,6 +134,54 @@ function _Canvas(cloned, params = {}, domElements) {
         document.body.appendChild(modal.element)
     });
 
+    const swapDimensions = () => {
+        const width = canvasWidth.value
+
+        canvasWidth.value = canvasHeight.value
+        canvasHeight.value = width
+
+        return {
+            width: parseInt(canvasWidth.value),
+            height: parseInt(width)
+        }
+    }
+
+    domElements.get("rotate-left")?.addEventListener("click", () => {
+        const {width, height} = swapDimensions()
+
+        const newPixels = new Array(height).fill(0).map(u => new Array(width).fill(0))
+
+        for (let i = 0; i<pixels.length; i++) {
+            for(let j = 0; j<pixels[i].length; j++) {
+                newPixels[height - 1 - j][i] = pixels[i][j]
+            }
+        }
+
+        pixels = newPixels;
+        params.width = width;
+        params.height = height;
+
+        render();
+    })
+    domElements.get("rotate-right")?.addEventListener("click", () => {
+        const {width, height} = swapDimensions()
+
+        const newPixels = new Array(height).fill(0).map(u => new Array(width).fill(0))
+
+        for (let i = 0; i<pixels.length; i++) {
+            for(let j = 0; j<pixels[i].length; j++) {
+                newPixels[j][width - 1 - i] = pixels[i][j]
+            }
+        }
+
+        pixels = newPixels;
+        params.width = width;
+        params.height = height;
+
+        render();
+    })
+
+    genPixels()
     render();
 
     return cloned
