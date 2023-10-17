@@ -11,19 +11,35 @@
         import { Canvas } from "/canvas.js";
         import { ToolBox } from "/toolbox.js";
 
+        const canvases = new Set()
+
         const createContainer = () => {
           const canvas = Canvas({
             width: 8,
             height: 16,
-            size: 10
+            size: 10,
+            onDelete: () => {
+              canvases.delete(canvas)
+            }
           });
 
           const container = document.getElementById("container");
           container.appendChild(canvas.element);
+
+          canvases.add(canvas)
         }
 
         const toolbox = ToolBox({
-          onNew: createContainer
+          onNew: createContainer,
+          onExport: () => {
+            const exportData = []
+
+            for(let el of canvases) {
+              exportData.push(el.export())
+            }
+
+            console.log(exportData)
+          }
         })
         document.getElementById("tool-box-container").appendChild(toolbox.element)
 
@@ -117,7 +133,7 @@
     <template id="canvas">
       <nav class="canvas-container panel">
         <div class="title panel-heading canvas-title">
-          <span contenteditable="true">Sprite</span>
+          <span contenteditable="true" data-teba-id="name">Sprite</span>
 
           <div class="field has-addons">
             <p class="control">

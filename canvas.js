@@ -6,16 +6,23 @@ import { Modal } from "./modal.js";
 import { CanvasPixel } from "./pixel.js";
 
 /**
+ * @typedef {Object} CanvasReturn
+ * @property {HTMLElement} element
+ * @property {Function} export
+ */
+
+/**
  * @param {HTMLElement} cloned
  * @param {Object} params - Params for Canvas
  * @param {number} [params.width=128] - The width of the Canvas
  * @param {number} [params.height=64] - The height of the Canvas
  * @param {number} [params.size=10] - The size of a pixel
  * @param {boolean} [params.grid=true] - If grid should be showned
+ * @param {Function} [params.onDelete] - Callback to be called in case of a delete
  * 
  * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
  *
- * @returns {HTMLElement}
+ * @returns {CanvasReturn}
  */
 function _Canvas(cloned, params = {}, domElements) {
     if (!params.height) {
@@ -125,6 +132,8 @@ function _Canvas(cloned, params = {}, domElements) {
             onConfirm: () => {
                 modal.close()
                 cloned.parentElement?.removeChild(cloned)
+
+                params.onDelete?.()
             }
         });
         modal.activate();
@@ -191,7 +200,31 @@ function _Canvas(cloned, params = {}, domElements) {
     genPixels()
     render();
 
-    return cloned
+    return {
+        element: cloned,
+        export: () => {
+         const ret = {
+            name: domElements.get("name")?.innerText,
+            width: params.width,
+            height: params.height,
+         }
+
+         const data = []
+
+         for(let i = 0; i < pixels.length; i++) {
+            const row = []
+            data.push(row)
+
+            for(let j = 0; j < pixels[i].length; j++) {
+                row.push(pixels[i][j].getState())
+            }
+         }
+
+         ret.data = data
+         
+         return ret
+        }
+    }
 }
 
 export const Canvas = wrapForTeba(_Canvas, "canvas")
