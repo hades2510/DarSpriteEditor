@@ -73,10 +73,10 @@ function _Canvas(cloned, params = {}, domElements) {
     const pixelSize = domElements.get("pixel-size")
     pixelSize.value = params.size.toString()
     pixelSize.addEventListener("input", (event) => {
-        document.documentElement.style.setProperty("--pixel-size", `${event.target.value}px`)
+        cloned.style.setProperty("--pixel-size", `${event.target.value}px`)
     });
 
-    document.documentElement.style.setProperty("--pixel-size", `${params.size}px`)
+    cloned.style.setProperty("--pixel-size", `${params.size}px`)
 
     /** @type {HTMLInputElement} */
     // @ts-ignore
@@ -105,11 +105,11 @@ function _Canvas(cloned, params = {}, domElements) {
     grid.addEventListener("input", (event) => {
         const gridIcon = domElements.get("grid-icon")
         if (grid.checked) {
-            document.documentElement.style.setProperty("--pixel-border", "var(--initial-pixelborder)" )
+            cloned.style.setProperty("--pixel-border", "var(--initial-pixelborder)" )
             gridIcon?.classList.remove("mdi-grid-off")
             gridIcon?.classList.add("mdi-grid")
         } else {
-            document.documentElement.style.setProperty("--pixel-border", "none")
+            cloned.style.setProperty("--pixel-border", "none")
             gridIcon?.classList.add("mdi-grid-off")
             gridIcon?.classList.remove("mdi-grid")
         }
