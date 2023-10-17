@@ -3,6 +3,7 @@
 import { wrapForTeba } from "./teba.js";
 
 import { Modal } from "./modal.js";
+import { CanvasPixel } from "./pixel.js";
 
 /**
  * @param {HTMLElement} cloned
@@ -46,10 +47,7 @@ function _Canvas(cloned, params = {}, domElements) {
             pixels.push(row)
 
             for (let x = 0; x < params.width; x++) {
-                const pixel = CanvasPixel({
-                    x,
-                    y
-                });
+                const pixel = CanvasPixel({});
 
                 row.push(pixel)
             }
@@ -188,44 +186,3 @@ function _Canvas(cloned, params = {}, domElements) {
 }
 
 export const Canvas = wrapForTeba(_Canvas, "canvas")
-
-/**
- * 
- * @param {HTMLElement} cloned 
- * @param {Object} params - Params for CanvasPixel
- * @param {number} [params.x = 0] - Position on the x axis
- * @param {number} [params.y = 0] - Position on the y axis
- * @param {boolean} [params.state = false] - State of the pixel, false is off, true is on
- * 
- * @returns {HTMLElement}
- */
-export function _CanvasPixel (cloned, params = {}) {
-    if (!params.x) {
-        params.x = 0
-    }
-
-    if (!params.y) {
-        params.y = 0
-    }
-
-    const render = () => {
-        const onClass = "pixel-on"
-
-        if (params.state) {
-            cloned.classList.add(onClass)
-        } else {
-            cloned.classList?.remove(onClass)
-        }
-    }
-
-    cloned.addEventListener("click", () => {
-        params.state = !params.state
-        render()
-    })
-
-    render()
-    
-    return cloned
-}
-
-export const CanvasPixel = wrapForTeba(_CanvasPixel, "canvas-pixel")
