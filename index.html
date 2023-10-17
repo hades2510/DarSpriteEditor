@@ -9,15 +9,26 @@
 
     <script lang="javascript" type="module">
         import { Canvas } from "/canvas.js";
+        import { ToolBox } from "/toolbox.js";
 
-        const canvas = Canvas({
-          width: 8,
-          height: 16,
-          size: 10
-        });
+        const createContainer = () => {
+          const canvas = Canvas({
+            width: 8,
+            height: 16,
+            size: 10
+          });
 
-        const container = document.getElementById("container");
-        container.appendChild(canvas.element);
+          const container = document.getElementById("container");
+          container.appendChild(canvas.element);
+        }
+
+        const toolbox = ToolBox({
+          onNew: createContainer
+        })
+        document.getElementById("tool-box-container").appendChild(toolbox.element)
+
+        //  create a default sprite
+        createContainer();
     </script>
 
     <style>
@@ -28,7 +39,7 @@
       }
 
       .canvas-container {
-        max-width: 50%;
+        width: 50%;
       }
 
       .canvas-title {
@@ -55,12 +66,52 @@
       .sprite-container {
         line-height: 0;
       }
+
+      .section {
+        padding-bottom: 0;
+      }
+
+      .button .icon:first-child:not(:last-child){
+        margin: 0;
+      }
+
+      #container {
+        display: flex;
+        flex-wrap: wrap;
+      }
     </style>
   </head>
 
   <body>
+    <section class="section" id="tool-box-container"></section>
     <section class="section" id="container">
     </section>
+
+    <template id="tool-box">
+      <div class="panel is-info">
+        <p class="panel-heading">Sprite Editor</p>
+
+        <p class="panel-list">
+          <p class="buttons has-addons">
+            <button class="button is-medium" data-teba-id="new">
+              <span class="icon"><i class="mdi mdi-file-document-plus"></i></span>
+              <span>New</span>
+            </button>
+          
+            <button class="control button is-medium" data-teba-id="export">
+              <span class="icon"><i class="mdi mdi-file-export"></i></span>
+              <span>Export</span>
+            </button>
+
+            <button class="control button is-medium" data-teba-id="import">
+              <span class="icon"><i class="mdi mdi-file-import"></i></span>
+              <span>Import</span>
+            </button>
+          </p>
+        </p>
+  
+      </div>
+    </template>
 
     <template id="canvas">
       <nav class="canvas-container panel">
