@@ -39,7 +39,7 @@
       }
 
       .canvas-container {
-        width: 50%;
+        width: calc(50% - 2rem);
       }
 
       .canvas-title {
@@ -78,6 +78,7 @@
       #container {
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-around;
       }
     </style>
   </head>
@@ -191,24 +192,27 @@
               Grid
             </label>
           </div>
+        </div>
 
-          <button class="button is-small" data-teba-id="rotate-left">
-            <span class="icon">
-              <i class="mdi mdi-rotate-left"></i>
-            </span>
-          </button>
+        <div class="panel-block">
+            <button class="button is-small" data-teba-id="rotate-left">
+              <span class="icon">
+                <i class="mdi mdi-rotate-left"></i>
+              </span>
+            </button>
 
-          <button class="button is-small" data-teba-id="rotate-right">
-            <span class="icon">
-              <i class="mdi mdi-rotate-right"></i>
-            </span>
-          </button>
+            <button class="button is-small" data-teba-id="rotate-right">
+              <span class="icon">
+                <i class="mdi mdi-rotate-right"></i>
+              </span>
+            </button>
 
-          <button class="button is-small" data-teba-id="invert">
-            <span class="icon">
-              <i class="mdi mdi-invert-colors"></i>
-            </span>
-          </button>
+            <button class="button is-small" data-teba-id="invert">
+              <span class="icon">
+                <i class="mdi mdi-invert-colors"></i>
+              </span>
+            </button>
+          </div>
         </div>
 
         <div data-teba-id="container" class="sprite-container">
