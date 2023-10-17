@@ -5,6 +5,7 @@ import { wrapForTeba } from "./teba.js";
 /**
  * @typedef {Object} PixelReturn
  * @property {HTMLElement} element
+ * @property {Function} getState
  * @property {Function} setState
  * @property {Function} toggleState
  */
@@ -37,6 +38,7 @@ export function _CanvasPixel (cloned, params = {}) {
     
     return {
         element: cloned,
+        getState: () => Boolean(params.state),
         setState: (val) => (params.state = val, render()),
         toggleState: () => (params.state = !params.state, render())
     }
