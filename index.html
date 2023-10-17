@@ -29,6 +29,59 @@
           canvases.add(canvas)
         }
 
+        const exportToFile = (data) => {
+          // compute total size of the file
+          let byteSize = 0;
+
+          const sprites = []
+
+          for(let sprite of data) {
+            const size = 1 /* size of name */ + sprite.name.length + 2 /* width and height */ + (sprite.width * sprite.height)/8
+
+            byteSize += size
+
+            const nameArray = new TextEncoder().encode(sprite.name)
+
+            // name
+            const byteArray = new Uint8Array(size);
+            byteArray[0] = sprite.name.length;
+            byteArray.set(nameArray, 1);
+
+            // dimensions
+            byteArray[sprite.name.length + 1] = sprite.width;
+            byteArray[sprite.name.length + 2] = sprite.height;
+
+            let currentOffset = sprite.name.length + 3
+            // byte data
+            for (let i = 0; i < sprite.data.length; i++) {
+              for (let j = 0; j < sprite.data[i].length;) {
+                let byte = 0;
+                let bit = 7;
+
+                while (bit >= 0) {
+                  byte = byte | (sprite.data[i][j] << bit)
+                  j++
+                  bit--
+                }
+
+                byteArray[currentOffset] = byte
+                currentOffset++
+              }
+            }
+
+            sprites.push(byteArray)
+          }
+
+          //  consolidate all sprites
+          const allSprites = new Uint8Array(byteSize)
+          let offset = 0
+
+          for( let spriteData of sprites) {
+            allSprites.set(spriteData, offset)
+            offset += spriteData.byteLength
+          }
+        }
+
         const toolbox = ToolBox({
           onNew: createContainer,
           onExport: () => {
@@ -38,7 +91,7 @@
               exportData.push(el.export())
             }
 
-            console.log(exportData)
+            exportToFile(exportData)
           }
         })
         document.getElementById("tool-box-container").appendChild(toolbox.element)
