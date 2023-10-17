@@ -80,6 +80,15 @@
             allSprites.set(spriteData, offset)
             offset += spriteData.byteLength
           }
+
+          const blob = new Blob([allSprites], {"type": "vendor/dar"})
+          const link = document.createElement("a")
+
+          link.setAttribute("href", URL.createObjectURL(blob))
+          link.setAttribute("download", "spriteSheet.dar")
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
         }
 
         const toolbox = ToolBox({
