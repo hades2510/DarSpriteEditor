@@ -178,6 +178,15 @@ function _Canvas(cloned, params = {}, domElements) {
 
         render();
     })
+    domElements.get("invert")?.addEventListener("click", () => {
+        for (let i = 0; i<pixels.length; i++) {
+            for(let j = 0; j<pixels[i].length; j++) {
+                pixels[i][j].toggleState()
+            }
+        }
+
+        render();
+    })
 
     genPixels()
     render();
