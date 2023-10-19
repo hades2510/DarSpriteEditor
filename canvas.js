@@ -50,6 +50,7 @@ function _Canvas(cloned, params = {}, domElements) {
            name: domElements.get("name")?.innerText,
            width: params.width,
            height: params.height,
+           size: domElements.get("pixel-size")?.value
         }
 
         const data = []
