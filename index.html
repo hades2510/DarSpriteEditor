@@ -13,13 +13,17 @@
 
         const canvases = new Set()
 
-        const createContainer = () => {
+        const createContainer = (info = {}) => {
           const canvas = Canvas({
-            width: 8,
-            height: 16,
-            size: 10,
+            width: info.width || 8,
+            height: info.height || 16,
+            size: info.size || 10,
+            data: info.data, 
             onDelete: () => {
               canvases.delete(canvas)
+            },
+            onDuplicate: (info) => {
+              createContainer(info)
             }
           });
 
@@ -92,7 +96,7 @@
         }
 
         const toolbox = ToolBox({
-          onNew: createContainer,
+          onNew: () => createContainer(),
           onExport: () => {
             const exportData = []
 

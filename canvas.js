@@ -18,7 +18,9 @@ import { CanvasPixel } from "./pixel.js";
  * @param {number} [params.height=64] - The height of the Canvas
  * @param {number} [params.size=10] - The size of a pixel
  * @param {boolean} [params.grid=true] - If grid should be showned
+ * @param {Array<Array<boolean>> | undefined} [params.data] - Pixel data
  * @param {Function} [params.onDelete] - Callback to be called in case of a delete
+ * @param {Function} [params.onDuplicate] - Callback called in case of a duplication request
  * 
  * @param {Map<string, HTMLElement>} domElements - Dom Elements of the cloned element
  *
@@ -43,10 +45,33 @@ function _Canvas(cloned, params = {}, domElements) {
 
     const container = domElements.get("container")
 
+    const _export = () => {
+        const ret = {
+           name: domElements.get("name")?.innerText,
+           width: params.width,
+           height: params.height,
+        }
+
+        const data = []
+
+        for(let i = 0; i < pixels.length; i++) {
+           const row = []
+           data.push(row)
+
+           for(let j = 0; j < pixels[i].length; j++) {
+               row.push(pixels[i][j].getState())
+           }
+        }
+
+        ret.data = data
+        
+        return ret
+       }
+
     /** @type Array<Array<any>> */
     let pixels = []
 
-    const genPixels = () => {
+    const genPixels = (data) => {
         pixels = []
 
         for(let y = 0; y < params.height; y++) {
@@ -54,7 +79,15 @@ function _Canvas(cloned, params = {}, domElements) {
             pixels.push(row)
 
             for (let x = 0; x < params.width; x++) {
-                const pixel = CanvasPixel({});
+                let state = false
+
+                if (data) {
+                    state = data[y][x]
+                }
+
+                const pixel = CanvasPixel({
+                    state
+                });
 
                 row.push(pixel)
             }
@@ -141,6 +174,10 @@ function _Canvas(cloned, params = {}, domElements) {
         document.body.appendChild(modal.element)
     });
 
+    domElements.get("duplicate")?.addEventListener("click", () => {
+        params.onDuplicate?.(_export())
+    })
+
     const swapDimensions = () => {
         const width = canvasWidth.value
 
@@ -197,33 +234,12 @@ function _Canvas(cloned, params = {}, domElements) {
         render();
     })
 
-    genPixels()
+    genPixels(params.data)
     render();
 
     return {
         element: cloned,
-        export: () => {
-         const ret = {
-            name: domElements.get("name")?.innerText,
-            width: params.width,
-            height: params.height,
-         }
-
-         const data = []
-
-         for(let i = 0; i < pixels.length; i++) {
-            const row = []
-            data.push(row)
-
-            for(let j = 0; j < pixels[i].length; j++) {
-                row.push(pixels[i][j].getState())
-            }
-         }
-
-         ret.data = data
-         
-         return ret
-        }
+        export: _export
     }
 }
 
