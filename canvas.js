@@ -114,7 +114,9 @@ function _Canvas(cloned, params = {}, domElements) {
 
                 pixel.element.addEventListener("mouseover", () => {
                     if (isDrawing && currentTool === "line") {
-                        // Preview the line (optional)
+                        removeUndetermined()
+                        drawLine(startX, startY, x, y, "undetermined")
+                        render()
                     }
                 });
 
@@ -155,7 +157,15 @@ function _Canvas(cloned, params = {}, domElements) {
         }
     }
 
-    const drawLine = (startX, startY, endX, endY) => {
+    const removeUndetermined = () => {
+        for(let y = 0; y < params.height; y++) {
+            for (let x = 0; x < params.width; x++) {
+                pixels[y][x].removeUndetermined()
+            }
+        }
+    }
+
+    const drawLine = (startX, startY, endX, endY, state = "on") => {
         const dx = Math.abs(endX - startX);
         const dy = Math.abs(endY - startY);
         const sx = (startX < endX) ? 1 : -1;
@@ -165,7 +175,7 @@ function _Canvas(cloned, params = {}, domElements) {
         while (true) {
             if (startY >= 0 && startY < pixels.length && 
                 startX >= 0 && startX < pixels[startY].length) {
-                pixels[startY][startX].setState(true);
+                pixels[startY][startX].setState(state);
             }
 
             if (startX === endX && startY === endY) break;
