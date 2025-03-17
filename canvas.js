@@ -45,12 +45,18 @@ function _Canvas(cloned, params = {}, domElements) {
 
     const container = domElements.get("container")
 
+    // Drawing state
+    let isDrawing = false;
+    let startX = 0;
+    let startY = 0;
+    let currentTool = "pixel"; // Default tool is pixel
+
     const _export = () => {
         const ret = {
-           name: domElements.get("name")?.innerText,
+           name: domElements.get("name")?.innerText || "Sprite",
            width: params.width,
            height: params.height,
-           size: domElements.get("pixel-size")?.value
+           size: parseInt(domElements.get("pixel-size")?.value || "10")
         }
 
         const data = []
@@ -67,7 +73,7 @@ function _Canvas(cloned, params = {}, domElements) {
         ret.data = data
         
         return ret
-       }
+    }
 
     /** @type Array<Array<any>> */
     let pixels = []
@@ -90,12 +96,54 @@ function _Canvas(cloned, params = {}, domElements) {
                     state
                 });
 
+                // Add mouse events for drawing
+                pixel.element.addEventListener("mousedown", (e) => {
+                    e.preventDefault(); // Prevent text selection
+                    if (currentTool === "pixel") {
+                        pixel.toggleState();
+                        return;
+                    }
+                    isDrawing = true;
+                    startX = x;
+                    startY = y;
+                });
+
+                pixel.element.addEventListener("click", () => {
+                    
+                });
+
+                pixel.element.addEventListener("mouseover", () => {
+                    if (isDrawing && currentTool === "line") {
+                        // Preview the line (optional)
+                    }
+                });
+
+                pixel.element.addEventListener("mouseup", () => {
+                    if (isDrawing && currentTool === "line") {
+                        drawLine(startX, startY, x, y);
+                        render();
+                    }
+                    isDrawing = false;
+                });
+
                 row.push(pixel)
             }
         }
+
+        // Add mouseup event to the container to handle cases where the user releases outside a pixel
+        container?.addEventListener("mouseup", () => {
+            isDrawing = false;
+        });
+
+        // Add mouseout event to the container to handle cases where the user moves outside the canvas
+        container?.addEventListener("mouseleave", () => {
+            isDrawing = false;
+        });
     }
 
     const render = () => {
+        if (!container) return;
+        
         container.innerHTML = "";
 
         for(let y = 0; y < params.height; y++) {
@@ -107,35 +155,85 @@ function _Canvas(cloned, params = {}, domElements) {
         }
     }
 
-    /** @type {HTMLInputElement} */
-    // @ts-ignore
+    const drawLine = (startX, startY, endX, endY) => {
+        const dx = Math.abs(endX - startX);
+        const dy = Math.abs(endY - startY);
+        const sx = (startX < endX) ? 1 : -1;
+        const sy = (startY < endY) ? 1 : -1;
+        let err = dx - dy;
+
+        while (true) {
+            if (startY >= 0 && startY < pixels.length && 
+                startX >= 0 && startX < pixels[startY].length) {
+                pixels[startY][startX].setState(true);
+            }
+
+            if (startX === endX && startY === endY) break;
+            const e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                startX += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                startY += sy;
+            }
+        }
+    }
+
+    // Set up tool selector
+    const toolSelector = domElements.get("drawing-tool");
+    if (toolSelector) {
+        // @ts-ignore - We know this is a select element
+        toolSelector.addEventListener("change", (event) => {
+            // @ts-ignore - We know this has a value property
+            currentTool = event.target.value;
+        });
+    }
+
     const pixelSize = domElements.get("pixel-size")
-    pixelSize.value = params.size.toString()
-    pixelSize.addEventListener("input", (event) => {
-        cloned.style.setProperty("--pixel-size", `${event.target.value}px`)
-    });
+    if (pixelSize) {
+        // @ts-ignore - We know this is an input element
+        pixelSize.value = params.size.toString()
+        pixelSize.addEventListener("input", (event) => {
+            if (event.target) {
+                // @ts-ignore - We know this has a value property
+                cloned.style.setProperty("--pixel-size", `${event.target.value}px`)
+            }
+        });
+    }
 
     cloned.style.setProperty("--pixel-size", `${params.size}px`)
 
     /** @type {HTMLInputElement} */
-    // @ts-ignore
     const canvasWidth = domElements.get("width")
-    canvasWidth.value = params.width.toString()
-    canvasWidth.addEventListener("input", (event) => {
-        params.width = event.target.value
-        genPixels()
-        render()
-    });
+    if (canvasWidth) {
+        // @ts-ignore - We know this is an input element
+        canvasWidth.value = params.width.toString()
+        canvasWidth.addEventListener("input", (event) => {
+            if (event.target) {
+                // @ts-ignore - We know this has a value property
+                params.width = parseInt(event.target.value);
+                genPixels()
+                render()
+            }
+        });
+    }
 
     /** @type {HTMLInputElement} */
-    // @ts-ignore
     const canvasHeight = domElements.get("height")
-    canvasHeight.value = params.height.toString()
-    canvasHeight.addEventListener("input", (event) => {
-        params.height = event.target.value
-        genPixels()
-        render()
-    });
+    if (canvasHeight) {
+        // @ts-ignore - We know this is an input element
+        canvasHeight.value = params.height.toString()
+        canvasHeight.addEventListener("input", (event) => {
+            if (event.target) {
+                // @ts-ignore - We know this has a value property
+                params.height = parseInt(event.target.value);
+                genPixels()
+                render()
+            }
+        });
+    }
 
     /** @type {HTMLInputElement} */
     // @ts-ignore

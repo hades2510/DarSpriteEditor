@@ -147,6 +147,7 @@
 
       .sprite-container {
         line-height: 0;
+        user-select: none; /* Prevent text selection while drawing */
       }
 
       .section {
@@ -161,6 +162,15 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
+      }
+
+      /* Optional: Add a cursor style for the drawing tools */
+      .drawing-pixel .canvas-pixel {
+        cursor: crosshair;
+      }
+      
+      .drawing-line .canvas-pixel {
+        cursor: crosshair;
       }
     </style>
   </head>
@@ -273,6 +283,20 @@
               <input type="checkbox" data-teba-id="grid">
               Grid
             </label>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <div class="field">
+            <label class="label">Drawing Tool</label>
+            <div class="control">
+              <div class="select is-small">
+                <select data-teba-id="drawing-tool">
+                  <option value="pixel">Pixel</option>
+                  <option value="line">Line</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 

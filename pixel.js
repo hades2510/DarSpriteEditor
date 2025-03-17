@@ -29,11 +29,6 @@ export function _CanvasPixel (cloned, params = {}) {
         }
     }
 
-    cloned.addEventListener("click", () => {
-        params.state = !params.state
-        render()
-    })
-
     render()
     
     return {
