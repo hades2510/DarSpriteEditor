@@ -265,6 +265,10 @@ function _Canvas(cloned, params = {}, domElements) {
 
     cloned.style.setProperty("--pixel-size", `${params.size}px`)
 
+    if (params.width >= 64) {
+        cloned.classList.add("canvas-container-full")
+    }
+
     /** @type {HTMLInputElement} */
     const canvasWidth = domElements.get("width")
     if (canvasWidth) {
