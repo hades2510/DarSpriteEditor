@@ -10,6 +10,7 @@
     <script lang="javascript" type="module">
         import { Canvas } from "/canvas.js";
         import { ToolBox } from "/toolbox.js";
+        import { generateUniqueCanvasName } from "./utils.js";
 
         const canvases = new Set()
 
@@ -18,11 +19,13 @@
             width: info.width || 8,
             height: info.height || 16,
             size: info.size || 10,
-            data: info.data, 
+            name: info.name,
+            data: info.data,
             onDelete: () => {
               canvases.delete(canvas)
             },
             onDuplicate: (info) => {
+              info.name = generateUniqueCanvasName(info.name)
               createContainer(info)
             }
           });

@@ -18,6 +18,7 @@ import { CanvasPixel } from "./pixel.js";
  * @param {number} [params.height=64] - The height of the Canvas
  * @param {number} [params.size=10] - The size of a pixel
  * @param {boolean} [params.grid=true] - If grid should be showned
+ * @param {string} [params.name] - The name of the canvas
  * @param {Array<Array<boolean>> | undefined} [params.data] - Pixel data
  * @param {Function} [params.onDelete] - Callback to be called in case of a delete
  * @param {Function} [params.onDuplicate] - Callback called in case of a duplication request
@@ -38,6 +39,12 @@ function _Canvas(cloned, params = {}, domElements) {
     if (!params.size) {
         params.size = 10
     }
+
+    if (!params.name) {
+        params.name = "Sprite"
+    }
+
+    domElements.get("name").innerText = params.name
 
     if (params.grid === undefined) {
         params.grid = true
