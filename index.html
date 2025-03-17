@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dar Sprite Editor</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma-rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.3.67/css/materialdesignicons.min.css"/>
 
     <script lang="javascript" type="module">
@@ -180,6 +180,67 @@
       .drawing-line .canvas-pixel {
         cursor: crosshair;
       }
+
+      .ruler-container {
+        position: relative;
+        margin-left: 20px;
+        margin-top: 20px;
+      }
+
+      .horizontal-ruler {
+        position: absolute;
+        height: 20px;
+        left: 0;
+        top: -20px;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .vertical-ruler {
+        position: absolute;
+        width: 20px;
+        left: -20px;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .ruler-mark {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 9px;
+        color: #666;
+        background-color: #f5f5f5;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .ruler-mark.step {
+        background-color: #e8e8e8;
+        font-weight: bold;
+        overflow: visible;
+        z-index: 1000;
+      }
+
+      .horizontal-ruler .ruler-mark {
+        height: var(--pixel-size);
+        width: var(--pixel-size);
+      }
+
+      .vertical-ruler .ruler-mark {
+        width: var(--pixel-size);
+        height: var(--pixel-size);
+      }
+
+      .sprite-area {
+        display: inline-block;
+      }
+
+      .coord-tag {
+        min-width: 40px;
+      }
     </style>
   </head>
 
@@ -302,7 +363,7 @@
           </div>
         </div>
 
-        <div class="panel-block">
+        <div class="panel-block is-align-items-flex-start is-justify-content-space-between">
           <div class="field">
             <label class="label">Drawing Tool</label>
             <div class="control">
@@ -311,6 +372,18 @@
                   <option value="pixel">Pixel</option>
                   <option value="line">Line</option>
                 </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Coordinates</label>
+            <div class="control">
+              <div class="tags has-addons are-normal">
+                <span class="coord-tag tag is-dark">X:</span>
+                <span class="coord-tag tag is-info" data-teba-id="coord-x">0</span>
+                <span class="coord-tag tag is-dark">Y:</span>
+                <span class="coord-tag tag is-info" data-teba-id="coord-y">0</span>
               </div>
             </div>
           </div>
@@ -337,8 +410,13 @@
           </div>
         </div>
 
-        <div data-teba-id="container" class="sprite-container">
-
+        <div class="ruler-container" data-teba-id="ruler-container">
+          <div class="horizontal-ruler" data-teba-id="h-ruler"></div>
+          <div class="vertical-ruler" data-teba-id="v-ruler"></div>
+          <div class="sprite-area">
+            <div data-teba-id="container" class="sprite-container">
+            </div>
+          </div>
         </div>
       </nav>
     </template>

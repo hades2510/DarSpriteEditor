@@ -53,21 +53,23 @@ function _Canvas(cloned, params = {}, domElements) {
 
     const _export = () => {
         const ret = {
-           name: domElements.get("name")?.innerText || "Sprite",
-           width: params.width,
-           height: params.height,
-           size: parseInt(domElements.get("pixel-size")?.value || "10")
+            name: domElements.get("name")?.innerText || "Sprite",
+            width: params.width,
+            height: params.height,
+            size: parseInt(domElements.get("pixel-size")?.value || "10")
         }
 
         const data = []
 
         for(let i = 0; i < pixels.length; i++) {
-           const row = []
-           data.push(row)
+            const row = []
+            data.push(row)
 
-           for(let j = 0; j < pixels[i].length; j++) {
-               row.push(pixels[i][j].getState())
-           }
+            for(let j = 0; j < pixels[i].length; j++) {
+                const state = pixels[i][j].getState();
+                // Convert string state to boolean for export
+                row.push(state === "on");
+            }
         }
 
         ret.data = data
@@ -86,15 +88,20 @@ function _Canvas(cloned, params = {}, domElements) {
             pixels.push(row)
 
             for (let x = 0; x < params.width; x++) {
-                let state = false
+                let state = "off";
 
                 if (data) {
-                    state = data[y][x]
+                    // Convert boolean to string state
+                    state = data[y][x] ? "on" : "off";
                 }
 
                 const pixel = CanvasPixel({
                     state
                 });
+
+                // Add data attributes for coordinates
+                pixel.element.dataset.x = x.toString();
+                pixel.element.dataset.y = y.toString();
 
                 // Add mouse events for drawing
                 pixel.element.addEventListener("mousedown", (e) => {
@@ -113,6 +120,13 @@ function _Canvas(cloned, params = {}, domElements) {
                 });
 
                 pixel.element.addEventListener("mouseover", () => {
+                    // Update coordinates display
+                    const coordX = domElements.get("coord-x");
+                    const coordY = domElements.get("coord-y");
+
+                    if (coordX) coordX.textContent = x.toString();
+                    if (coordY) coordY.textContent = y.toString();
+
                     if (isDrawing && currentTool === "line") {
                         removeUndetermined()
                         drawLine(startX, startY, x, y, "undetermined")
@@ -154,6 +168,40 @@ function _Canvas(cloned, params = {}, domElements) {
             for (let x = 0; x < params.width; x++) {
                 container.appendChild(pixels[y][x].element);
             }
+        }
+
+        renderRulers();
+    }
+
+    const renderRulers = () => {
+        const hRuler = domElements.get("h-ruler");
+        const vRuler = domElements.get("v-ruler");
+
+        if (!hRuler || !vRuler) return;
+
+        hRuler.innerHTML = "";
+        vRuler.innerHTML = "";
+
+        // Horizontal ruler
+        for (let x = 0; x < params.width; x++) {
+            const mark = document.createElement("div");
+            mark.className = "ruler-mark";
+            if (x % 4 === 0) {
+                mark.className += " step";
+                mark.textContent = x.toString();
+            }
+            hRuler.appendChild(mark);
+        }
+
+        // Vertical ruler
+        for (let y = 0; y < params.height; y++) {
+            const mark = document.createElement("div");
+            mark.className = "ruler-mark";
+            if (y % 4 === 0) {
+                mark.className += " step";
+                mark.textContent = y.toString();
+            }
+            vRuler.appendChild(mark);
         }
     }
 
@@ -208,7 +256,9 @@ function _Canvas(cloned, params = {}, domElements) {
         pixelSize.addEventListener("input", (event) => {
             if (event.target) {
                 // @ts-ignore - We know this has a value property
-                cloned.style.setProperty("--pixel-size", `${event.target.value}px`)
+                const size = event.target.value;
+                cloned.style.setProperty("--pixel-size", `${size}px`);
+                renderRulers(); // Update rulers when pixel size changes
             }
         });
     }
@@ -232,6 +282,7 @@ function _Canvas(cloned, params = {}, domElements) {
                 }
                 genPixels()
                 render()
+                renderRulers()
             }
         });
     }
@@ -247,6 +298,7 @@ function _Canvas(cloned, params = {}, domElements) {
                 params.height = parseInt(event.target.value);
                 genPixels()
                 render()
+                renderRulers()
             }
         });
     }
@@ -321,6 +373,7 @@ function _Canvas(cloned, params = {}, domElements) {
         params.height = height;
 
         render();
+        renderRulers();
     })
     domElements.get("rotate-right")?.addEventListener("click", () => {
         const {width, height} = swapDimensions()
@@ -338,6 +391,7 @@ function _Canvas(cloned, params = {}, domElements) {
         params.height = height;
 
         render();
+        renderRulers();
     })
     domElements.get("invert")?.addEventListener("click", () => {
         for (let i = 0; i<pixels.length; i++) {
@@ -347,10 +401,12 @@ function _Canvas(cloned, params = {}, domElements) {
         }
 
         render();
+        renderRulers();
     })
 
     genPixels(params.data)
     render();
+    renderRulers();
 
     return {
         element: cloned,
