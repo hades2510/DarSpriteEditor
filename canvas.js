@@ -224,6 +224,12 @@ function _Canvas(cloned, params = {}, domElements) {
             if (event.target) {
                 // @ts-ignore - We know this has a value property
                 params.width = parseInt(event.target.value);
+                //  take full width if width is greater than 128
+                if (params.width >= 64) {
+                    cloned.classList.add("canvas-container-full")
+                } else {
+                    cloned.classList.remove("canvas-container-full")
+                }
                 genPixels()
                 render()
             }
