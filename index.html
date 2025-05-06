@@ -244,6 +244,27 @@
       .coord-tag {
         min-width: 40px;
       }
+
+      .bg-image-control-container {
+        display: flex;
+      }
+
+      .bg-image-preview-container {
+        margin-left: 10px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+      }
+
+      .bg-image-preview {
+        width: 100px;
+        height: 60px;
+        border: 1px solid #ddd;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: none;
+      }
     </style>
   </head>
 
@@ -410,6 +431,41 @@
                 <i class="mdi mdi-invert-colors"></i>
               </span>
             </button>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <div class="field bg-image-control-container">
+            <div>
+              <label class="label">Background Image</label>
+              <div class="control">
+                <div class="file has-name is-small">
+                  <label class="file-label">
+                    <input class="file-input" type="file" accept="image/*" data-teba-id="bg-image-input">
+                    <span class="file-cta" data-teba-id="bg-image-button">
+                      <span class="file-icon">
+                        <i class="mdi mdi-image"></i>
+                      </span>
+                      <span class="file-label">Choose image</span>
+                    </span>
+                  </label>
+                  <button class="button is-small" data-teba-id="bg-image-clear">
+                    <span class="icon">
+                      <i class="mdi mdi-close"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="bg-image-preview-container">
+              <div class="bg-image-preview" data-teba-id="bg-image-preview">
+                <button class="button is-small is-rounded toggle-preview is-transparent" data-teba-id="toggle-bg-preview" style="background: transparent; border: none;">
+                  <span class="icon is-small">
+                    <i class="mdi mdi-eye"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

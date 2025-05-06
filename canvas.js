@@ -20,6 +20,7 @@ import { CanvasPixel } from "./pixel.js";
  * @param {boolean} [params.grid=true] - If grid should be showned
  * @param {string} [params.name] - The name of the canvas
  * @param {Array<Array<boolean>> | undefined} [params.data] - Pixel data
+ * @param {string} [params.referenceImageUrl] - Optional background reference image
  * @param {Function} [params.onDelete] - Callback to be called in case of a delete
  * @param {Function} [params.onDuplicate] - Callback called in case of a duplication request
  * 
@@ -44,7 +45,10 @@ function _Canvas(cloned, params = {}, domElements) {
         params.name = "Sprite"
     }
 
-    domElements.get("name").innerText = params.name
+    const nameElement = domElements.get("name");
+    if (nameElement) {
+        nameElement.innerText = params.name;
+    }
 
     if (params.grid === undefined) {
         params.grid = true
@@ -63,7 +67,8 @@ function _Canvas(cloned, params = {}, domElements) {
             name: domElements.get("name")?.innerText || "Sprite",
             width: params.width,
             height: params.height,
-            size: parseInt(domElements.get("pixel-size")?.value || "10")
+            size: parseInt(domElements.get("pixel-size")?.getAttribute("value") || "10"),
+            referenceImageUrl: params.referenceImageUrl
         }
 
         const data = []
@@ -164,10 +169,30 @@ function _Canvas(cloned, params = {}, domElements) {
         });
     }
 
+    // Track background visibility state
+    let bgImageVisible = true;
+
     const render = () => {
         if (!container) return;
         
         container.innerHTML = "";
+
+        // Add background image layer if provided and visible
+        if (params.referenceImageUrl && bgImageVisible) {
+            const bg = document.createElement("div");
+            bg.className = "canvas-background-image";
+            bg.style.backgroundImage = `url('${params.referenceImageUrl}')`;
+            bg.style.backgroundSize = 'contain';
+            bg.style.backgroundRepeat = 'no-repeat';
+            bg.style.position = 'absolute';
+            bg.style.top = '0';
+            bg.style.left = '0';
+            bg.style.width = '100%';
+            bg.style.height = '100%';
+            bg.style.pointerEvents = 'none'; // prevent interfering with mouse
+            bg.style.zIndex = '-1';
+            container.appendChild(bg);
+        }
 
         for(let y = 0; y < params.height; y++) {
             container.appendChild(document.createElement("br"))
@@ -330,6 +355,95 @@ function _Canvas(cloned, params = {}, domElements) {
             gridIcon?.classList.remove("mdi-grid")
         }
     })
+
+    // Background image selector
+    const bgImageButton = domElements.get("bg-image-button");
+    const bgImageInput = domElements.get("bg-image-input");
+    const bgImageClear = domElements.get("bg-image-clear");
+    const toggleBgPreview = domElements.get("toggle-bg-preview");
+
+    if (bgImageButton && bgImageInput) {
+        // Initialize with existing reference image if any
+        if (params.referenceImageUrl) {
+            const bgImagePreview = domElements.get("bg-image-preview");
+            if (bgImagePreview) {
+                bgImagePreview.style.backgroundImage = `url('${params.referenceImageUrl}')`;
+                bgImagePreview.style.display = "block";
+            }
+        }
+
+        bgImageButton.addEventListener("click", () => {
+            // @ts-ignore - We know this is an input element
+            // bgImageInput.click();
+        });
+
+        // @ts-ignore - We know this is an input element
+        bgImageInput.addEventListener("change", (event) => {
+            // @ts-ignore - We know this has files property
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // @ts-ignore - We know this has result property
+                    params.referenceImageUrl = e.target.result;
+                    
+                    // Update preview if it exists
+                    const bgImagePreview = domElements.get("bg-image-preview");
+                    if (bgImagePreview) {
+                        bgImagePreview.style.backgroundImage = `url('${params.referenceImageUrl}')`;
+                        bgImagePreview.style.display = "block";
+                    }
+                    
+                    // Reset visibility state to visible when new image is loaded
+                    bgImageVisible = true;
+                    updateToggleIcon();
+                    render();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (bgImageClear) {
+        bgImageClear.addEventListener("click", () => {
+            params.referenceImageUrl = undefined;
+            
+            // Clear preview if it exists
+            const bgImagePreview = domElements.get("bg-image-preview");
+            if (bgImagePreview) {
+                bgImagePreview.style.backgroundImage = "";
+                bgImagePreview.style.display = "none";
+            }
+            
+            render();
+        });
+    }
+
+    // Add toggle functionality for background image visibility
+    if (toggleBgPreview) {
+        toggleBgPreview.addEventListener("click", () => {
+            bgImageVisible = !bgImageVisible;
+            updateToggleIcon();
+            render();
+        });
+    }
+
+    // Function to update the toggle icon based on visibility state
+    const updateToggleIcon = () => {
+        const toggleIcon = toggleBgPreview?.querySelector('.mdi');
+        if (toggleIcon) {
+            if (bgImageVisible) {
+                toggleIcon.classList.remove('mdi-eye-off');
+                toggleIcon.classList.add('mdi-eye');
+            } else {
+                toggleIcon.classList.remove('mdi-eye');
+                toggleIcon.classList.add('mdi-eye-off');
+            }
+        }
+    };
+
+    // Initialize toggle icon state
+    updateToggleIcon();
 
     /** @type {HTMLInputElement} */
     // @ts-ignore
